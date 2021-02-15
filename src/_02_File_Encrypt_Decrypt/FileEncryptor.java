@@ -36,17 +36,18 @@ public class FileEncryptor {
 		catch(IOException e){
 		e.printStackTrace();	
 		}
+		JOptionPane.showMessageDialog(null, "You encryped sentence is " + output);
 
 	}
 
 	static String encrypt(String e) {
 		char replacedChar;
 		char currentChar;
-		int ascii = 0;
+		int a = 0;
 		for (int i = 0; i < e.length(); i++) {
 			currentChar = e.charAt(i);
-			ascii = (int) currentChar;
-			replacedChar = (char) (ascii + 5);
+			a = (int) currentChar;
+			replacedChar = (char) (a + 5);
 			if (i==e.length()-1) {
 				e = e.substring(0, i) + replacedChar;
 			}
