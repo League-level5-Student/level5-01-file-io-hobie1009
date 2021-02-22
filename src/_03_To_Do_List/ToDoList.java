@@ -2,6 +2,9 @@ package _03_To_Do_List;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ public class ToDoList implements ActionListener {
 	JFrame frame = new JFrame();
 	JPanel panel = new JPanel();
 	ArrayList<String> list = new ArrayList<String>();
+	int removecheck = 0;
 
 	public static void main(String[] args) {
 		new ToDoList().Start();
@@ -29,9 +33,9 @@ public class ToDoList implements ActionListener {
 	public void Start() {
 		add.addActionListener(this);
 		view.addActionListener(this);
-		remove.addActionListener(null);
-		save.addActionListener(null);
-		load.addActionListener(null);
+		remove.addActionListener(this);
+		save.addActionListener(this);
+		load.addActionListener(this);
 		panel.add(add);
 		panel.add(view);
 		panel.add(remove);
@@ -41,6 +45,25 @@ public class ToDoList implements ActionListener {
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("src/_03_To_Do_List/ToDoList"));
+			
+			String line = br.readLine();
+			while(line != null){
+				list.add(line);
+				line = br.readLine();
+			}
+			
+			br.close();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Start of program list:"+list);
+
 	}
 
 	@Override
@@ -49,29 +72,47 @@ public class ToDoList implements ActionListener {
 		if (e.getSource() == add) {
 			String addhold = JOptionPane.showInputDialog("What task do you want to add to the list?");
 			list.add(addhold);
+			System.out.println("List after added:" + list);
 		}
-		if (e.getSource() == load) {
+		if (e.getSource() == view) {
 			JOptionPane.showMessageDialog(null, "" + list);
 		}
 		if (e.getSource() == remove) {
-
+			removecheck = 0;
+			String removeobject = JOptionPane.showInputDialog("What task do you want to remove?");
+			System.out.println("List before removal" + list + "\n" + "Item needed to be removed:" + removeobject);
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).equals(removeobject)) {
+					list.remove(i);
+				} else {
+					removecheck += 1;
+				}
+			}
+			if (removecheck == 1) {
+				JOptionPane.showMessageDialog(null, "The item you want to remove is not present within the list");
+			}
+			if (removecheck == 0) {
+				JOptionPane.showMessageDialog(null, "The item has been removed, you list now is:"+list);
+			}
 		}
 		if (e.getSource() == save) {
-			try {
-				FileWriter fw = new FileWriter("src/_00_ToDoList/ToDoList");
-				fw.write("/n" + list);
-			} catch (IOException e1) {
-			e.printStackTrace();
-			}
+		try {
+			FileWriter fw = new FileWriter("src/_03_To_Do_List/ToDoList");
+			fw.write("\n" + list);
+			fw.close();
+			JOptionPane.showMessageDialog(null, "Your list has been successfully saved");
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
-		if(e.getSource() == load) {
-			JFileChooser jfc = new JFileChooser();
-			int returnVal = jfc.showOpenDialog(null);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				String fileName = jfc.getSelectedFile().getAbsolutePath();
-				System.out.println(fileName);
-			}
+	}
+	if (e.getSource() == load) {
+		JFileChooser jfc = new JFileChooser();
+		int returnVal = jfc.showOpenDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {	 
+			String fileName = jfc.getSelectedFile().getAbsolutePath();
+			System.out.println(fileName);
 		}
+	}
 
 	}
 	/*
